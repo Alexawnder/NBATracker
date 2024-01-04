@@ -5,16 +5,36 @@
         <link rel="stylesheet" href="style.css"> 
     </header>
 
-
     <body>
-        <p>SHEEEEEESH SUPER DUPER WEBSITE INFO MONSTER TIME!</p>
-        <input type="text" id="playerNameInput" placeholder="Enter player's name">
-        <button onclick="showInfo();">CLICK ME TO SHOW INFORMATION</button>
+        <h1>NBA Player Statistics Tracker</h1>
 
-        <p id="playerInfo">INFO WILL BE SHOWING UP HERE</p>
-        <hr>
-        <p id="statInfo">STAT INFO WILL BE DISPLAYED HERE</p>
+        <div id="search-bar-container">
+            <input type="text" id="search-bar" placeholder="Enter the player's full name">
+            <button id="search-button" onclick="showInfo();" >Search For Player</button>
+        </div>
 
+
+        <div id="info-boxes">
+            <div class="info-box">
+                <h2>Player Information</h2>
+                <p id="playerInfo"></p>
+            </div>
+    
+            <div class="info-box">
+                <h2>Overall Stats Averages</h2>
+                <p id="statInfo"></p>
+            </div>
+    
+            <div class="info-box">
+                <h2>Past 5 Games Information</h2>
+                <p id="recentInfo"></p>
+            </div>
+    
+            <div class="info-box">
+                <h2>Bing Chilling Info</h2>
+                <p id="extraSpace">Information goes here.</p>
+            </div>
+        </div>
     </body>
 
 
