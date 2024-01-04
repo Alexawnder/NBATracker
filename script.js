@@ -19,11 +19,11 @@ async function showInfo(){
             displayStats(playerID);
             // Display specific information in the user interface
             userInfo.innerHTML = `
-                <strong>Player Info:</strong><br>
-                Player Name: ${player.first_name} ${player.last_name} <br>
-                Height: ${player.height_feet}'${player.height_inches}" <br>
-                Position: ${player.position} <br>
-                Team: ${player.team.full_name} <br>
+                <strong>Player ID:</strong> ${player.id} <br>
+                <strong>Player Name:</strong> ${player.first_name} ${player.last_name} <br>
+                <strong>Height:</strong> ${player.height_feet}'${player.height_inches}" <br>
+                <strong>Position:</strong> ${player.position} <br>
+                <strong>Team:</strong> ${player.team.full_name} <br>
             `;
         } else {
             userInfo.textContent = 'No player found.';
@@ -50,13 +50,18 @@ async function getPlayerStats(playerID) {
         const averageRebounds = totalRebounds / recentGames.length;
         const totalAssists = recentGames.reduce((sum, game) => sum + game.ast, 0);
         const averageAssists = totalAssists / recentGames.length;
+        const totalMin = recentGames.reduce((sum, game) => sum + parseInt(game.min,10), 0);
+        const averageMin = totalMin / recentGames.length;
+        const totalThrees = recentGames.reduce((sum, game) => sum + game.fg3m, 0);
+        const averageThrees = totalThrees / recentGames.length;
         
         var recentInfo = document.getElementById("recentInfo");
         recentInfo.innerHTML = `
-            <strong>Player Info:</strong><br>
-            Average Points Past 5 Games: ${averagePoints} <br>
-            Average Rebounds Past 5 Games: ${averageRebounds} <br>
-            Average Assists Past 5 Games: ${averageAssists} <br>
+            <strong>Avg Mins Past 5 Games:</strong> ${averageMin} <br>
+            <strong>Avg Pts Past 5 Games:</strong> ${averagePoints} <br>
+            <strong>Avg Rebounds Past 5 Games:</strong> ${averageRebounds} <br>
+            <strong>Avg Assists Past 5 Games:</strong> ${averageAssists} <br>
+            <strong>Avg Threes Past 5 Games:</strong> ${averageThrees} <br>
         `;
     })
     .catch(error => {
@@ -76,15 +81,14 @@ async function displayStats(playerID){
         var statInfo = document.getElementById("statInfo");
         var player = data.data[0];
         statInfo.innerHTML = `
-            <strong>Season Averages:</strong><br>
-            Games Played: ${player.games_played} <br>
-            Average Minutes In Game: ${player.min} <br>
-            Points per Game: ${player.pts} <br>
-            Rebounds per Game: ${player.reb} <br>
-            Assists per Game: ${player.ast} <br>
-            Field Goal Percentage: ${player.fg_pct} <br>
-            Three-Point Percentage: ${player.fg3_pct} <br>
-            Free Throw Percentage: ${player.ft_pct} <br>
+            <strong>Games Played:</strong> ${player.games_played} <br>
+            <strong>Average Minutes In Game:</strong> ${player.min} <br>
+            <strong>Points per Game:</strong> ${player.pts} <br>
+            <strong>Rebounds per Game:</strong> ${player.reb} <br>
+            <strong>Assists per Game:</strong> ${player.ast} <br>
+            <strong>Field Goal Percentage:</strong> ${player.fg_pct} <br>
+            <strong>Three-Point Percentage:</strong> ${player.fg3_pct} <br>
+            <strong>Free Throw Percentage:</strong> ${player.ft_pct} <br>
         `;
     })
     .catch(error => {
