@@ -71,3 +71,25 @@ p {
     box-sizing: border-box;
     text-align: center;
 }
+
+#playerRankings {
+    list-style-type: circle;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#playerRankings li {
+    width: calc(20% - 20px); /* Set the width for each list item (20% - margin) */
+    margin: 10px;
+    border: 1px solid #cecece;
+    padding: 10px;
+    background-color: #ebe9e9;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+#playerRankings li span {
+    font-weight: bold;
+}

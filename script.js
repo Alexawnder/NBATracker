@@ -1,9 +1,83 @@
+async function createList(){
+    const players = []; // Array to store player data
+    const playerRankingsElement = document.getElementById('playerRankings');
+
+    // Clear previous content
+    playerRankingsElement.innerHTML = 'Compiling The INFORMATION PLEASE WAIT!';
+        // Assuming you have a list of player names, you can loop through them
+        const playerNames = []; // Add more player names as needed
+        try {
+            const response = await fetch(`https://api.sportsdata.io/v3/nba/scores/json/PlayersActiveBasic?key=77a7366503e941389882191b0c894c3e`);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+
+            // Shuffle the array to get a random order
+            const shuffledPlayers = data.sort(() => Math.random() - 0.5);
+            // Select the first 20 players from the shuffled array
+            const selectedPlayers = shuffledPlayers.slice(0, 20);
+
+            selectedPlayers.forEach(player => {
+                const fullName = `${player.FirstName} ${player.LastName}`;
+                playerNames.push(fullName);
+            });
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        for (const playerName of playerNames) {
+            try {
+                const response = await fetch(`https://www.balldontlie.io/api/v1/players?search=${playerName}`);
+                const data = await response.json();
+                var player = data.data[0];
+                var playerID = player.id;
+
+                const playerStats = await getPlayerStats(playerID);
+                const averageStats = await displayStats(playerID);
+                const percentage = (((playerStats.averageAssists / averageStats.overallAssists) + (playerStats.averagePoints / averageStats.overallPoints) + (playerStats.averageRebounds / averageStats.overallRebounds)) / 3) * 100;
+    
+                // Add player data to the array
+                players.push({
+                    playerName: playerName,
+                    percentage: percentage,
+                });
+                await delay(300);
+
+            } catch (error) {
+                console.error('Error fetching player data:', error);
+            }
+        }
+        console.log(players);
+        // Sort players based on percentage in descending order
+        players.sort((a, b) => {
+            // Check for NaN and move it to the end
+            if (isNaN(a.percentage) && isNaN(b.percentage)) {
+              return 0;
+            } else if (isNaN(a.percentage)) {
+              return 1; // Move NaN to the end
+            } else if (isNaN(b.percentage)) {
+              return -1; // Move NaN to the end
+            } else {
+              return b.percentage - a.percentage; // Sort descending order
+            }
+          });        
+        console.log(players);
+        // Update the UI with sorted player data
+        updatePlayerUI(players);
+}
+
 async function showInfo() {
     var playerName = document.getElementById('search-bar').value;
     var playerID = "0";
 
     try {
-        const response = await fetch('https://www.balldontlie.io/api/v1/players?search=' + playerName);
+        // Searches for player based on the name
+        const response = await fetch(`https://www.balldontlie.io/api/v1/players?search=${playerName}`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -22,12 +96,41 @@ async function showInfo() {
             const averageStats = await displayStats(playerID);
             nbaImageChange(player.first_name, player.last_name);
 
-            
-            const percentage = (((playerStats.averageAssists/averageStats.overallAssists) + (playerStats.averagePoints/averageStats.overallPoints)+ (playerStats.averageRebounds/averageStats.overallRebounds))/4)*100;
-
-            extraSpace.innerHTML = `
-                THIS BROTHA OVERALL IS DOING ${percentage.toFixed(2)}% THAN NORMAL.
+            var recentInfo = document.getElementById("recentInfo");
+            recentInfo.innerHTML = `
+                <strong>Avg Mins Past 5 Games:</strong> ${playerStats.averageMin} <br>
+                <strong>Avg Pts Past 5 Games:</strong> ${playerStats.averagePoints} <br>
+                <strong>Avg Rebounds Past 5 Games:</strong> ${playerStats.averageRebounds} <br>
+                <strong>Avg Assists Past 5 Games:</strong> ${playerStats.averageAssists} <br>
+                <strong>Avg Threes Past 5 Games:</strong> ${playerStats.averageThrees} <br>
             `;
+
+            var statInfo = document.getElementById("statInfo");
+            statInfo.innerHTML = `
+                <strong>Games Played:</strong> ${averageStats.games} <br>
+                <strong>Average Minutes In Game:</strong> ${averageStats.overallMin} <br>
+                <strong>Points per Game:</strong> ${averageStats.overallPoints} <br>
+                <strong>Rebounds per Game:</strong> ${averageStats.overallRebounds} <br>
+                <strong>Assists per Game:</strong> ${averageStats.overallAssists} <br>
+                <strong>Field Goal Percentage:</strong> ${averageStats.fgPCT} <br>
+                <strong>Three-Point Percentage:</strong> ${averageStats.fg3PCT} <br>
+                <strong>Free Throw Percentage:</strong> ${averageStats.ftPCT} <br>
+            `;
+
+            const percentage = (((playerStats.averageAssists/averageStats.overallAssists) + (playerStats.averagePoints/averageStats.overallPoints)+ (playerStats.averageRebounds/averageStats.overallRebounds))/3)*100;
+            if(percentage > 125){
+                extraSpace.innerHTML = `
+                BET ON HIS ASS BET ON HIS ASS BET ON HIM ${percentage.toFixed(2)}% TO THE FUCKIN MOOOOOOOOOOOOOON.
+            `;
+            } else if(percentage > 100){
+                extraSpace.innerHTML = `
+               HE DOING PRETTY OK MAYBE BET ${percentage.toFixed(2)}% THAN NORMAL.
+            `;
+            } else if(percentage > 80){
+                extraSpace.innerHTML = `HE DOING EHHHHHHHHHHHHHHHH ${percentage.toFixed(2)}% THAN NORMAL.`;
+            } else {
+                extraSpace.innerHTML = `THIS GUY IS A FUCKING DROOOOOOOOOOOOOOLER ${percentage.toFixed(2)}% BET UNDER BET UNDER BET UNDER.`;
+            }
 
             // Display specific information in the user interface
             userInfo.innerHTML = `
@@ -40,9 +143,25 @@ async function showInfo() {
         } else {
             userInfo.textContent = 'No player found.';
         }
+
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }
+}
+
+function updatePlayerUI(players) {
+    // Assuming you have an HTML element to display the player rankings
+    const playerRankingsElement = document.getElementById('playerRankings');
+
+    // Clear previous content
+    playerRankingsElement.innerHTML = '';
+
+    // Display players in the sorted order
+    players.forEach((player, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${index + 1}. ${player.playerName} - ${player.percentage.toFixed(2)}%`;
+        playerRankingsElement.appendChild(listItem);
+    });
 }
 
 async function getPlayerStats(playerID) {
@@ -55,7 +174,10 @@ async function getPlayerStats(playerID) {
             }
 
             const data = await response.json();
-            const recentGames = data.data.slice(-5);
+            const recentGames = data.data.slice(-5).filter(game =>
+                parseInt(game.min, 10) !== 0 
+            );
+
             const totalPoints = recentGames.reduce((sum, game) => sum + game.pts, 0);
             const averagePoints = totalPoints / recentGames.length;
             const totalRebounds = recentGames.reduce((sum, game) => sum + game.reb, 0);
@@ -72,16 +194,8 @@ async function getPlayerStats(playerID) {
                 averagePoints,
                 averageRebounds,
                 averageAssists,
+                averageThrees,
             };
-
-            var recentInfo = document.getElementById("recentInfo");
-            recentInfo.innerHTML = `
-                <strong>Avg Mins Past 5 Games:</strong> ${averageMin} <br>
-                <strong>Avg Pts Past 5 Games:</strong> ${averagePoints} <br>
-                <strong>Avg Rebounds Past 5 Games:</strong> ${averageRebounds} <br>
-                <strong>Avg Assists Past 5 Games:</strong> ${averageAssists} <br>
-                <strong>Avg Threes Past 5 Games:</strong> ${averageThrees} <br>
-            `;
 
             resolve(averagesObject);
         } catch (error) {
@@ -104,22 +218,15 @@ async function displayStats(playerID) {
             var statInfo = document.getElementById("statInfo");
             var player = data.data[0];
 
-            statInfo.innerHTML = `
-                <strong>Games Played:</strong> ${player.games_played} <br>
-                <strong>Average Minutes In Game:</strong> ${player.min} <br>
-                <strong>Points per Game:</strong> ${player.pts} <br>
-                <strong>Rebounds per Game:</strong> ${player.reb} <br>
-                <strong>Assists per Game:</strong> ${player.ast} <br>
-                <strong>Field Goal Percentage:</strong> ${player.fg_pct} <br>
-                <strong>Three-Point Percentage:</strong> ${player.fg3_pct} <br>
-                <strong>Free Throw Percentage:</strong> ${player.ft_pct} <br>
-            `;
-
             const totalAverage = {
                 overallMin: player.min,
                 overallPoints: player.pts,
                 overallRebounds: player.reb,
                 overallAssists: player.ast,
+                fgPCT: player.fg_pct,
+                fg3PCT: player.fg3_pct,
+                ftPCT: player.ft_pct,
+                games: player.games_played,
             };
 
             resolve(totalAverage);
