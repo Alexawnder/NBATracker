@@ -4,14 +4,11 @@ const cheerio = require('cheerio');
 async function getPlayerImageURL() {
     const axiosResponse = await axios.request({
         method: "GET",
-        url: "https://www.nba.com/search?filters=player&q=$Anthony%20Davis",
-        headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
-        }
+        url: "https://www.espn.com/nba/boxscore/_/gameId/401585106",
     });
 
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
+    await new Promise(resolve => setTimeout(resolve, 8000));
+    
     console.log(axiosResponse.data);
     const $ = cheerio.load(axiosResponse.data);
     const imageURL = [];
@@ -24,3 +21,5 @@ async function getPlayerImageURL() {
     console.log(imageURL);
 
 }
+
+getPlayerImageURL();

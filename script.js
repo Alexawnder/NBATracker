@@ -20,8 +20,8 @@ async function showInfo() {
             // Use await to wait for the promises to resolve
             const playerStats = await getPlayerStats(playerID);
             const averageStats = await displayStats(playerID);
-            console.log(playerStats.averageAssists);
-            console.log(averageStats.overallAssists);
+            nbaImageChange(player.first_name, player.last_name);
+
             
             const percentage = (((playerStats.averageAssists/averageStats.overallAssists) + (playerStats.averagePoints/averageStats.overallPoints)+ (playerStats.averageRebounds/averageStats.overallRebounds))/4)*100;
 
@@ -123,6 +123,50 @@ async function displayStats(playerID) {
             };
 
             resolve(totalAverage);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            reject(error);
+        }
+    });
+}
+
+async function nbaImageChange(firstName, lastName) {
+    return new Promise(async (resolve, reject) => {
+        var playerID = "null";
+        try {
+            const response = await fetch(`https://api.sportsdata.io/v3/nba/scores/json/PlayersActiveBasic?key=77a7366503e941389882191b0c894c3e`);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+
+            const matchingPlayers = data.filter(player =>
+                player.FirstName.toLowerCase() === firstName.toLowerCase() &&
+                player.LastName.toLowerCase() === lastName.toLowerCase()
+            );
+            playerID = matchingPlayers.length > 0 ? matchingPlayers[0].PlayerID : "null";
+            console.log(matchingPlayers);
+
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            reject(error);
+        }
+
+        try {
+            const response = await fetch(`https://api.sportsdata.io/v3/nba/scores/json/Player/${playerID}?key=77a7366503e941389882191b0c894c3e`);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            const nbaID = data.NbaDotComPlayerID;
+
+            var imgElement = document.getElementById('dynamicImage');
+            imgElement.src = `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${nbaID}.png`
+
+            resolve(data); // You might want to pass some relevant data here
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
             reject(error);
