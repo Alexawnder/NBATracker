@@ -46,6 +46,7 @@ async function createList(){
                     playerName: playerName,
                     percentage: percentage,
                 });
+        
                 await delay(300);
 
             } catch (error) {
@@ -120,16 +121,16 @@ async function showInfo() {
             const percentage = (((playerStats.averageAssists/averageStats.overallAssists) + (playerStats.averagePoints/averageStats.overallPoints)+ (playerStats.averageRebounds/averageStats.overallRebounds))/3)*100;
             if(percentage > 125){
                 extraSpace.innerHTML = `
-                BET ON HIS ASS BET ON HIS ASS BET ON HIM ${percentage.toFixed(2)}% TO THE FUCKIN MOOOOOOOOOOOOOON.
+                BET ON HIS ASS BRO PERFORMING ${percentage.toFixed(2)}% BETTER TO THE FUCKIN MOOOOOOOOOOOOOON.
             `;
             } else if(percentage > 100){
                 extraSpace.innerHTML = `
-               HE DOING PRETTY OK MAYBE BET ${percentage.toFixed(2)}% THAN NORMAL.
+               HE DOING OK, PERFORMING ${percentage.toFixed(2)}% BETTER THAN NORMAL.
             `;
             } else if(percentage > 80){
-                extraSpace.innerHTML = `HE DOING EHHHHHHHHHHHHHHHH ${percentage.toFixed(2)}% THAN NORMAL.`;
+                extraSpace.innerHTML = `HE DOING EHHHHHHHHHHHHHHHH PERFORMING ${percentage.toFixed(2)}% WORSE THAN NORMAL.`;
             } else {
-                extraSpace.innerHTML = `THIS GUY IS A FUCKING DROOOOOOOOOOOOOOLER ${percentage.toFixed(2)}% BET UNDER BET UNDER BET UNDER.`;
+                extraSpace.innerHTML = `THIS GUY IS A FUCKING DROOOOOOOOOOOOOOLER PERFORMING ${percentage.toFixed(2)}% WORSE. BET UNDER BET UNDER BET UNDER.`;
             }
 
             // Display specific information in the user interface
@@ -159,7 +160,11 @@ function updatePlayerUI(players) {
     // Display players in the sorted order
     players.forEach((player, index) => {
         const listItem = document.createElement('li');
-        listItem.textContent = `${index + 1}. ${player.playerName} - ${player.percentage.toFixed(2)}%`;
+        if(isNaN(player.percentage)){
+            listItem.textContent = `${index + 1}. ${player.playerName} - This guy injured or drooling.`;
+        } else {
+            listItem.textContent = `${index + 1}. ${player.playerName} - ${player.percentage.toFixed(2)}%`;
+        }
         playerRankingsElement.appendChild(listItem);
     });
 }

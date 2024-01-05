@@ -22,7 +22,6 @@ p {
 }
 
 
-
 #search-bar-container {
     width: 80%;
     display: flex;
@@ -63,7 +62,7 @@ p {
 }
 
 .info-box {
-    width: 360px;
+    width: 350px;
     padding: 10px;
     background-color: rgb(230, 230, 230);
     border: 1px solid #ddd;
@@ -80,16 +79,16 @@ p {
 }
 
 #playerRankings li {
-    width: calc(20% - 20px); /* Set the width for each list item (20% - margin) */
+    width: calc(20% - 10px); /* Set the width for each list item (20% - margin) */
     margin: 10px;
     border: 1px solid #cecece;
     padding: 10px;
     background-color: #ebe9e9;
-    border-radius: 5px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
 }
 
 #playerRankings li span {
-    font-weight: bold;
+    font-weight: bolder;
 }
