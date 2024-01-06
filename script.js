@@ -12,15 +12,11 @@ async function createList(){
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
+            var teamAbbreviation = document.getElementById("nbaTeams").value;
             const data = await response.json();
+            const playersFromTeam = data.filter(player => player.Team === teamAbbreviation);
 
-            // Shuffle the array to get a random order
-            const shuffledPlayers = data.sort(() => Math.random() - 0.5);
-            // Select the first 20 players from the shuffled array
-            const selectedPlayers = shuffledPlayers.slice(0, 20);
-
-            selectedPlayers.forEach(player => {
+            playersFromTeam.forEach(player => {
                 const fullName = `${player.FirstName} ${player.LastName}`;
                 playerNames.push(fullName);
             });
@@ -53,7 +49,6 @@ async function createList(){
                 console.error('Error fetching player data:', error);
             }
         }
-        console.log(players);
         // Sort players based on percentage in descending order
         players.sort((a, b) => {
             // Check for NaN and move it to the end
@@ -67,7 +62,6 @@ async function createList(){
               return b.percentage - a.percentage; // Sort descending order
             }
           });        
-        console.log(players);
         // Update the UI with sorted player data
         updatePlayerUI(players);
 }
