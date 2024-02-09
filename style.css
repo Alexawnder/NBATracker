@@ -21,17 +21,8 @@ p {
     text-align: left;
 }
 
-
-#search-bar-container {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
 #search-bar {
-    width: 100%;
+    width: 80%;
     padding: 15px;
     font-size: 18px;
     border: 1px solid #ccc;
@@ -40,11 +31,31 @@ p {
     margin-bottom: 10px;
 }
 
+#search-bar-container {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 #search-button {
-    width: 98%;
+    width: 50%;
     padding: 15px;
     font-size: 18px;
     background-color: #4dda52;
+    color: white;
+    margin-right: 100px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#nbaStatButton {
+    width: 50%;
+    padding: 15px;
+    font-size: 18px;
+    background-color: #90a2ca;
     color: white;
     border: none;
     border-radius: 8px;
